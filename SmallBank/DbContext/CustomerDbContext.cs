@@ -19,7 +19,7 @@ namespace SmallBank.DbContext
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //configuring databse herer
+            //configuring database here
             optionsBuilder.UseMySql(new MySqlConnectionStringBuilder()
             {
                 Server = "localhost",
