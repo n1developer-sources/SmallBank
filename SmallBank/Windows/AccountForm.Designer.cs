@@ -52,7 +52,7 @@
             this.txtBalance.Location = new System.Drawing.Point(12, 42);
             this.txtBalance.Name = "txtBalance";
             this.txtBalance.Size = new System.Drawing.Size(268, 26);
-            this.txtBalance.TabIndex = 2;
+            this.txtBalance.TabIndex = 0;
             // 
             // cbAccountType
             // 
@@ -65,7 +65,7 @@
             this.cbAccountType.Location = new System.Drawing.Point(12, 110);
             this.cbAccountType.Name = "cbAccountType";
             this.cbAccountType.Size = new System.Drawing.Size(268, 28);
-            this.cbAccountType.TabIndex = 4;
+            this.cbAccountType.TabIndex = 1;
             // 
             // label2
             // 
@@ -84,7 +84,7 @@
             this.chkShare.Location = new System.Drawing.Point(12, 154);
             this.chkShare.Name = "chkShare";
             this.chkShare.Size = new System.Drawing.Size(143, 24);
-            this.chkShare.TabIndex = 5;
+            this.chkShare.TabIndex = 2;
             this.chkShare.Text = "Shared Account";
             this.chkShare.UseVisualStyleBackColor = true;
             // 
@@ -97,7 +97,7 @@
             this.btnConfirm.Location = new System.Drawing.Point(0, 193);
             this.btnConfirm.Name = "btnConfirm";
             this.btnConfirm.Size = new System.Drawing.Size(292, 30);
-            this.btnConfirm.TabIndex = 6;
+            this.btnConfirm.TabIndex = 3;
             this.btnConfirm.Text = "Confirm";
             this.btnConfirm.UseVisualStyleBackColor = false;
             this.btnConfirm.Click += new System.EventHandler(this.btnConfirm_Click);

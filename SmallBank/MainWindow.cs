@@ -7,8 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.EntityFrameworkCore;
-using SmallBank.DbContext;
 using SmallBank.Models;
 using SmallBank.Windows;
 
@@ -16,18 +14,12 @@ namespace SmallBank
 {
     public partial class MainWindow : Form
     {
-        //database context object, to understand better learn entity framework
-        private readonly CustomerDbContext _context;
-
         //constructor
         public MainWindow()
         {
             InitializeComponent();
             dgv.AutoGenerateColumns = false;
-            CustomerDbContext.CurrentCustomerDbContext = new CustomerDbContext();
-            _context = CustomerDbContext.CurrentCustomerDbContext;
-            _context.Database.EnsureCreated();
-            _context.Customers.Load();
+            AddDumpCustomers();
             LoadData();
         }
 
@@ -36,7 +28,7 @@ namespace SmallBank
         {
             BindingSource s = new BindingSource();
             dgv.DataSource = s;
-            s.DataSource = _context.Customers.Include(c => c.Account).ToList();
+            s.DataSource = Customers;
         }
 
         //when add new customer button clicked, this method going to fire
@@ -51,10 +43,8 @@ namespace SmallBank
 
                 if (f.CurrentCustomer.Name.Equals("")) return;
                 if (f.CurrentCustomer.CPR.Equals("")) return;
-                _context.Customers.Add(f.CurrentCustomer);
 
-                //save changes to database
-                _context.SaveChanges();
+                AddCustomer(f.CurrentCustomer);
 
                 //refresh the data
                 LoadData();
@@ -70,10 +60,7 @@ namespace SmallBank
         {
             try
             {
-                int id = Convert.ToInt16(dgv.SelectedRows[0].Cells[0].Value);
-
-                //getting customer object from database, using id
-                var customer = _context.Customers.Include(c => c.Account).FirstOrDefault(c => c.Id == id);
+                var customer = GetSelectCustomer();
 
                 txtBalance.Text = customer.Account.Balance.ToString();
                 btnUpdateAccountBalance.Enabled = true;
@@ -92,8 +79,7 @@ namespace SmallBank
         {
             try
             {
-                _context.Customers.Remove(GetSelectCustomer());
-                _context.SaveChanges();
+                DeleteCustomer(GetSelectCustomer());
                 LoadData();
             }
             catch (Exception exception)
@@ -106,9 +92,8 @@ namespace SmallBank
         private Customer GetSelectCustomer()
         {
             int x = Convert.ToInt16(dgv.SelectedRows[0].Cells[0].Value);
-            var customer = _context.Customers.FirstOrDefault(c => c.Id == x);
 
-            return customer;
+            return GetCustomerById(x);
         }
 
         //when modify customer button clicked, this method will be fired
@@ -126,7 +111,9 @@ namespace SmallBank
                 customer.Name = f.CurrentCustomer.Name;
                 customer.CPR = f.CurrentCustomer.CPR;
                 customer.Loan = f.CurrentCustomer.Loan;
-                _context.SaveChanges();
+
+                UpdateCustomer(customer);
+
                 LoadData();
             }
             catch (Exception ex)
@@ -149,7 +136,8 @@ namespace SmallBank
                 var customer = GetSelectCustomer();
                 customer.Account = win.CurrentAccount;
 
-                _context.SaveChanges();
+                UpdateCustomer(customer);
+
                 LoadData();
             }
             catch (Exception exception)
@@ -178,8 +166,7 @@ namespace SmallBank
                 return;
             }
 
-            int x = Convert.ToInt16(dgv.SelectedRows[0].Cells[0].Value);
-            var customer = _context.Customers.Include(c => c.Account).FirstOrDefault(c => c.Id == x);
+            var customer = GetSelectCustomer();
 
             try
             {
@@ -190,13 +177,79 @@ namespace SmallBank
                 }
 
                 customer.Account.Balance = balance;
-                _context.SaveChanges();
+                
+                UpdateCustomer(customer);
+
                 LoadData();
             }
             catch (Exception exception)
             {
 
             }
+        }
+
+        public static readonly List<Customer> Customers = new List<Customer>();
+
+        //add customer at startup
+        private void AddDumpCustomers()
+        {
+            var a = new Account {AccountType = AccountType.Budget, Shared = true, Id = 1, Balance = 1200};
+
+            var c1 = new Customer
+            {
+                Id = 1,
+                Account = a,
+                CPR = "CPR",
+                Loan = 1100,
+                Name = "Customer 1"
+            };
+
+            var c2 = new Customer
+            {
+                Id = 1,
+                Account = a,
+                CPR = "CPR",
+                Loan = 1100,
+                Name = "Customer 2"
+            };
+
+            Customers.Add(c1);
+            Customers.Add(c2);
+        }
+
+        //find customer by id
+        private Customer GetCustomerById(int id)
+        {
+            return Customers.FirstOrDefault(c => c.Id == id);
+        }
+
+        //delete customer
+        private void DeleteCustomer(Customer customer)
+        {
+            Customers.Remove(customer);
+        }
+
+        //update customer data
+        private void UpdateCustomer(Customer newCustomer)
+        {
+            for (var x = 0; x < Customers.Count; x++)
+            {
+                if (Customers[x].Id != newCustomer.Id) continue;
+
+                Customers[x] = newCustomer;
+
+                return;
+            }
+        }
+
+        //add new customer in the list
+        private void AddCustomer(Customer newCustomer)
+        {
+            var lastId = Customers.OrderByDescending(c => c.Id).FirstOrDefault()?.Id ?? 1;
+
+            newCustomer.Id = lastId;
+
+            Customers.Add(newCustomer);
         }
     }
 }
