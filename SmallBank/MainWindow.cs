@@ -177,7 +177,7 @@ namespace SmallBank
                 }
 
                 customer.Account.Balance = balance;
-                
+
                 UpdateCustomer(customer);
 
                 LoadData();
@@ -193,7 +193,7 @@ namespace SmallBank
         //add customer at startup
         private void AddDumpCustomers()
         {
-            var a = new Account {AccountType = AccountType.Budget, Shared = true, Id = 1, Balance = 1200};
+            var a = new Account { AccountType = AccountType.Budget, Shared = true, Id = 1, Balance = 1200 };
 
             var c1 = new Customer
             {
@@ -206,7 +206,7 @@ namespace SmallBank
 
             var c2 = new Customer
             {
-                Id = 1,
+                Id = 2,
                 Account = a,
                 CPR = "CPR",
                 Loan = 1100,
@@ -245,7 +245,13 @@ namespace SmallBank
         //add new customer in the list
         private void AddCustomer(Customer newCustomer)
         {
-            var lastId = Customers.OrderByDescending(c => c.Id).FirstOrDefault()?.Id ?? 1;
+            if (Customers.FirstOrDefault(c => c.Name.ToLower().Equals(newCustomer.Name.ToLower())) != null)
+            {
+                MessageBox.Show("Customer Already Exist");
+                return;
+            }
+
+            var lastId = Customers.OrderByDescending(c => c.Id).FirstOrDefault()?.Id + 1 ?? 1;
 
             newCustomer.Id = lastId;
 
