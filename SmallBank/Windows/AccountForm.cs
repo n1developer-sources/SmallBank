@@ -19,6 +19,15 @@ namespace SmallBank.Windows
 
             //set the account default type to payroll
             cbAccountType.SelectedIndex = 0;
+
+            this.Closing += OnClosing;
+        }
+
+        private bool IsOkay = false;
+        private void OnClosing(object sender, CancelEventArgs e)
+        {
+            if (!IsOkay)
+                CurrentAccount = null;
         }
 
         public Account CurrentAccount { get; set; }
@@ -46,7 +55,14 @@ namespace SmallBank.Windows
 
             CurrentAccount.Balance = balance;
 
-            Hide();
+            CurrentAccount.Id = GetNewAId();
+            IsOkay = true;
+            Close();
+        }
+
+        private int GetNewAId()
+        {
+            return MainWindow.Customers.Select(x=>x.Account).Where(x=>x!=null).OrderByDescending(c => c.Id).FirstOrDefault()?.Id + 1 ?? 1;
         }
     }
 }

@@ -49,7 +49,8 @@ namespace SmallBank.Windows
             dgv.DataSource = s;
 
             //load customer which have an active account into the data grid view
-            s.DataSource = MainWindow.Customers.Where(c => c.Account != null).Where(c => c.Account.Shared).ToList();
+            s.DataSource = MainWindow.Customers.Where(c => c.Account != null).Where(c => c.Account.Shared).GroupBy(p => p.Account.Id)
+                .Select(g => g.First()).ToList();
         }
 
         private void PickAccount_Load(object sender, EventArgs e)

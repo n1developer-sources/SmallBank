@@ -91,9 +91,16 @@ namespace SmallBank
         //it will return selected customer in data grid view
         private Customer GetSelectCustomer()
         {
-            int x = Convert.ToInt16(dgv.SelectedRows[0].Cells[0].Value);
+            try
+            {
+                int x = Convert.ToInt16(dgv.SelectedRows[0].Cells[0].Value);
 
-            return GetCustomerById(x);
+                return GetCustomerById(x);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         //when modify customer button clicked, this method will be fired
@@ -106,8 +113,9 @@ namespace SmallBank
                 CustomerForm f = new CustomerForm(customer);
                 f.ShowDialog();
 
-                if (f.CurrentCustomer.Name.Equals("")) return;
-                if (f.CurrentCustomer.CPR.Equals("")) return;
+                if (f.CurrentCustomer == null)
+                    return;
+
                 customer.Name = f.CurrentCustomer.Name;
                 customer.CPR = f.CurrentCustomer.CPR;
                 customer.Loan = f.CurrentCustomer.Loan;
@@ -125,6 +133,11 @@ namespace SmallBank
         //when modify account button clicked, this method will be fired
         private void btnModifyAccount_Click(object sender, EventArgs e)
         {
+            if (GetSelectCustomer() == null)
+            {
+                return;
+            }
+
             var win = new AccountPicker();
 
             win.ShowDialog();
@@ -134,6 +147,7 @@ namespace SmallBank
             try
             {
                 var customer = GetSelectCustomer();
+
                 customer.Account = win.CurrentAccount;
 
                 UpdateCustomer(customer);
@@ -150,6 +164,8 @@ namespace SmallBank
         {
 
         }
+
+
 
         //when update account button clicked, this method will be fired
         private void btnUpdateAccountBalance_Click(object sender, EventArgs e)
@@ -245,12 +261,6 @@ namespace SmallBank
         //add new customer in the list
         private void AddCustomer(Customer newCustomer)
         {
-            if (Customers.FirstOrDefault(c => c.Name.ToLower().Equals(newCustomer.Name.ToLower())) != null)
-            {
-                MessageBox.Show("Customer Already Exist");
-                return;
-            }
-
             var lastId = Customers.OrderByDescending(c => c.Id).FirstOrDefault()?.Id + 1 ?? 1;
 
             newCustomer.Id = lastId;
