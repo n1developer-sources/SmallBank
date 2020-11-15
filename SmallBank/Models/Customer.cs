@@ -14,15 +14,13 @@ namespace SmallBank.Models
     public class Customer
     {
         //primary key
-        [Key]
         public int Id { get; set; }
         public string Name { get; set; }
         public string CPR { get; set; }
         public int Loan { get; set; }
 
         //temp balance to show in data grid view
-        [NotMapped] public int Balance => Account?.Balance ?? 0;
-
+        public int Balance => Account?.Balance ?? 0;
 
         //customer account
         public Account Account { get; set; }
