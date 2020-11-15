@@ -28,6 +28,7 @@ namespace SmallBank
         {
             BindingSource s = new BindingSource();
             dgv.DataSource = s;
+            //set source to customers
             s.DataSource = Customers;
         }
 
@@ -113,6 +114,7 @@ namespace SmallBank
                 CustomerForm f = new CustomerForm(customer);
                 f.ShowDialog();
 
+                //check if close button of the form clicked
                 if (f.CurrentCustomer == null)
                     return;
 
@@ -204,6 +206,7 @@ namespace SmallBank
             }
         }
 
+        //list of customers
         public static readonly List<Customer> Customers = new List<Customer>();
 
         //add customer at startup

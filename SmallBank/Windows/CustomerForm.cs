@@ -21,6 +21,7 @@ namespace SmallBank.Windows
             this.Closing += OnClosing;
         }
 
+        //it will be true if confirmed button clicked, and false when close button clicked
         private bool IsOkay = false;
         private void OnClosing(object sender, CancelEventArgs e)
         {
@@ -28,6 +29,7 @@ namespace SmallBank.Windows
                 CurrentCustomer = null;
         }
 
+        //Validate Customer if its not exists before or there is any error to handle 
         private (bool, string) ValidateCustomer(Customer cs)
         {
             //MessageBox.Show(cs.Id + "");
@@ -45,6 +47,8 @@ namespace SmallBank.Windows
 
             return (true, "");
         }
+
+        //check if string is int
         private bool IsInt(string s)
         {
             try
@@ -57,6 +61,7 @@ namespace SmallBank.Windows
                 return false;
             }
         }
+
         public Customer CurrentCustomer { get; set; }
         public CustomerForm(Customer customer) : this()
         {
